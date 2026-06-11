@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>鼠鼠日文五十音學習網🐭</title>
+    <title>日文假名全功能特訓器吱🐭</title>
     <style>
         :root {
             --primary-color: #e6f2ff;
@@ -81,7 +81,6 @@
             margin-bottom: 15px;
         }
 
-        /* 拗音需要3欄排列 */
         .yo-on-grid {
             grid-template-columns: repeat(3, 1fr);
         }
@@ -116,13 +115,78 @@
         .kana-card .katakana {
             font-size: 1.1rem;
             font-weight: normal;
-            color: #e67e22; /* 用橙色區分片假名 */
+            color: #e67e22;
             margin: 2px 0;
         }
 
         .kana-card .romaji {
             font-size: 0.8rem;
             color: #666;
+        }
+
+        /* 自訂篩選面板 */
+        .filter-panel {
+            background: #fdfefe;
+            border: 2px solid #bdc3c7;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+            text-align: left;
+        }
+
+        .filter-section {
+            margin-bottom: 12px;
+            border-bottom: 1px dashed #ddd;
+            padding-bottom: 8px;
+        }
+        
+        .filter-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .filter-section label {
+            margin-right: 10px;
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .row-select-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .row-btn-all {
+            grid-column: span 3;
+            background: #bdc3c7;
+            border: none;
+            padding: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .apply-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 5px;
+            font-size: 1rem;
+        }
+
+        .apply-btn:hover {
+            background: #219653;
         }
 
         /* 遊戲區 */
@@ -240,12 +304,11 @@
 <body>
 
     <header>
-        <h1>鼠鼠日文五十音學習🐭</h1>
-        <p>點擊字卡聽發音（上方為平假名，下方為片假名），答對 9 題即可幫睫毛老鼠完成拼圖！</p>
+        <h1>日文假名冒險吱吱🐭</h1>
+        <p>點擊字卡聽發音吱。右邊可以自由挑選你想複習的「行數範圍」吱！</p>
     </header>
 
     <div class="container">
-        <!-- 左邊：完整五十音分類表 -->
         <div class="section">
             <div class="category-title">1. 清音 (Seion)</div>
             <div class="chart-grid" id="seionChart"></div>
@@ -263,18 +326,59 @@
             <div class="chart-grid yo-on-grid" id="yoonChart"></div>
         </div>
 
-        <!-- 右邊：拼圖遊戲 -->
         <div class="section game-box">
-            <h2>老鼠拼圖挑戰 🧩</h2>
+            <h2>自訂特訓範圍 🧩</h2>
+            
+            <div class="filter-panel">
+                <div class="filter-section">
+                    <strong>1. 選擇假名種類：</strong><br>
+                    <label><input type="checkbox" id="chkHira" checked> 平假名 (あ)</label>
+                    <label><input type="checkbox" id="chkKata" checked> 片假名 (ア)</label>
+                </div>
+                
+                <div class="filter-section">
+                    <strong>2. 選擇音調大類：</strong><br>
+                    <label><input type="checkbox" id="typeSeion" checked> 清/鼻音</label>
+                    <label><input type="checkbox" id="typeDakuon" checked> 濁音</label>
+                    <label><input type="checkbox" id="typeHandakuon" checked> 半濁</label>
+                    <label><input type="checkbox" id="typeYoon" checked> 拗音</label>
+                </div>
+
+                <div class="filter-section" id="rowFilterSection">
+                    <strong>3. 選擇具體字行 (可複選)：</strong><br>
+                    <button class="row-btn-all" onclick="selectAllRows()">全選 / 取消全選</button>
+                    <div class="row-select-grid">
+                        <label><input type="checkbox" class="chk-row" value="あ" checked> あ行</label>
+                        <label><input type="checkbox" class="chk-row" value="か" checked> か行</label>
+                        <label><input type="checkbox" class="chk-row" value="さ" checked> さ行</label>
+                        <label><input type="checkbox" class="chk-row" value="た" checked> た行</label>
+                        <label><input type="checkbox" class="chk-row" value="な" checked> な行</label>
+                        <label><input type="checkbox" class="chk-row" value="は" checked> は行</label>
+                        <label><input type="checkbox" class="chk-row" value="ま" checked> ま行</label>
+                        <label><input type="checkbox" class="chk-row" value="や" checked> や行</label>
+                        <label><input type="checkbox" class="chk-row" value="ら" checked> ら行</label>
+                        <label><input type="checkbox" class="chk-row" value="わ" checked> わ/ん</label>
+                        <label><input type="checkbox" class="chk-row" value="が" checked> が行</label>
+                        <label><input type="checkbox" class="chk-row" value="ざ" checked> ざ行</label>
+                        <label><input type="checkbox" class="chk-row" value="だ" checked> だ行</label>
+                        <label><input type="checkbox" class="chk-row" value="ば" checked> ば行</label>
+                        <label><input type="checkbox" class="chk-row" value="ぱ" checked> ぱ行</label>
+                        <label><input type="checkbox" class="chk-row" value="拗音" checked> 完整拗音</label>
+                    </div>
+                </div>
+
+                <button class="apply-btn" onclick="updateQuizPool()">🔄 生成專屬關卡並開始</button>
+            </div>
+
             <div class="score-board">成功配對: <span id="score">0</span> / 9</div>
             
             <div class="quiz-container" id="quizContainer">
-                <p>請揀出正確嘅羅馬拼音：</p>
+                <p>請選出正確的羅馬拼音吱：</p>
                 <div class="question-display" id="questionKana">あ</div>
                 <div class="options-grid" id="optionsGrid"></div>
             </div>
 
-            <div class="win-message" id="winMessage">🎉 恭喜！你成功砌番隻大睫毛老鼠出嚟啦！ 🐭</div>
+            <div class="win-message" id="winMessage">🎉 恭喜！你成功拼到一隻長睫毛老鼠鼠！ 🐭</div>
 
             <div class="puzzle-wrapper">
                 <div class="puzzle-bg"></div>
@@ -294,75 +398,68 @@
     </div>
 
     <script>
-        // 1. 清音 (包含平假名、片假名、羅馬拼音)
+        // 1. 清音 (已修正 21:"に" 的文字 與 26:"ひ" 的 row 屬性)
         const seionData = [
-            {hira:'あ', kata:'ア', romaji:'a'}, {hira:'い', kata:'イ', romaji:'i'}, {hira:'う', kata:'ウ', romaji:'u'}, {hira:'え', kata:'エ', romaji:'e'}, {hira:'お', kata:'オ', romaji:'o'},
-            {hira:'ка', kata:'カ', romaji:'ka', hira:'か'}, {hira:'き', kata:'キ', romaji:'ki'}, {hira:'く', kata:'ク', romaji:'ku'}, {hira:'け', kata:'ケ', romaji:'ke'}, {hira:'こ', kata:'コ', romaji:'ko'},
-            {hira:'さ', kata:'サ', romaji:'sa'}, {hira:'し', kata:'シ', romaji:'shi'}, {hira:'す', kata:'ス', romaji:'su'}, {hira:'せ', kata:'セ', romaji:'se'}, {hira:'そ', kata:'ソ', romaji:'so'},
-            {hira:'た', kata:'タ', romaji:'ta'}, {hira:'ち', kata:'チ', romaji:'chi'}, {hira:'つ', kata:'ツ', romaji:'tsu'}, {hira:'て', kata:'テ', romaji:'te'}, {hira:'と', kata:'ト', romaji:'to'},
-            {hira:'な', kata:'ナ', romaji:'na'}, {hira:'に', kata:'ニ', romaji:'ni'}, {hira:'ぬ', kata:'ヌ', romaji:'nu'}, {hira:'ね', kata:'ネ', romaji:'ne'}, {hira:'の', kata:'ノ', romaji:'no'},
-            {hira:'は', kata:'ハ', romaji:'ha'}, {hira:'ひ', kata:'ヒ', romaji:'hi'}, {hira:'ふ', kata:'フ', romaji:'fu'}, {hira:'へ', kata:'ヘ', romaji:'he'}, {hira:'ほ', kata:'ホ', romaji:'ho'},
-            {hira:'ま', kata:'マ', romaji:'ma'}, {hira:'み', kata:'ミ', romaji:'mi'}, {hira:'む', kata:'ム', romaji:'mu'}, {hira:'め', kata:'メ', romaji:'me'}, {hira:'も', kata:'モ', romaji:'mo'},
-            {hira:'や', kata:'ヤ', romaji:'ya'}, {hira:'', kata:'', romaji:''},        {hira:'ゆ', kata:'ユ', romaji:'yu'}, {hira:'', kata:'', romaji:''},        {hira:'よ', kata:'ヨ', romaji:'yo'},
-            {hira:'ら', kata:'ラ', romaji:'ra'}, {hira:'り', kata:'リ', romaji:'ri'}, {hira:'る', kata:'ル', romaji:'ru'}, {hira:'れ', kata:'レ', romaji:'re'}, {hira:'ろ', kata:'ロ', romaji:'ro'},
-            {hira:'わ', kata:'ワ', romaji:'wa'}, {hira:'', kata:'', romaji:''},        {hira:'', kata:'', romaji:''},        {hira:'', kata:'', romaji:''},        {hira:'を', kata:'ヲ', romaji:'wo'}
+            {hira:'あ', kata:'ア', romaji:'a', type:'seion', row:'あ'}, {hira:'い', kata:'イ', romaji:'i', type:'seion', row:'あ'}, {hira:'う', kata:'ウ', romaji:'u', type:'seion', row:'あ'}, {hira:'え', kata:'エ', romaji:'e', type:'seion', row:'あ'}, {hira:'お', kata:'オ', romaji:'o', type:'seion', row:'あ'},
+            {hira:'か', kata:'カ', romaji:'ka', type:'seion', row:'か'}, {hira:'き', kata:'キ', romaji:'ki', type:'seion', row:'か'}, {hira:'く', kata:'ク', romaji:'ku', type:'seion', row:'か'}, {hira:'け', kata:'ケ', romaji:'ke', type:'seion', row:'か'}, {hira:'こ', kata:'コ', romaji:'ko', type:'seion', row:'か'},
+            {hira:'さ', kata:'サ', romaji:'sa', type:'seion', row:'さ'}, {hira:'し', kata:'シ', romaji:'shi', type:'seion', row:'さ'}, {hira:'す', kata:'ス', romaji:'su', type:'seion', row:'さ'}, {hira:'せ', kata:'塞', romaji:'se', type:'seion', row:'さ'}, {hira:'そ', kata:'ソ', romaji:'so', type:'seion', row:'さ'},
+            {hira:'た', kata:'タ', romaji:'ta', type:'seion', row:'た'}, {hira:'ち', kata:'チ', romaji:'chi', type:'seion', row:'た'}, {hira:'つ', kata:'ツ', romaji:'tsu', type:'seion', row:'た'}, {hira:'て', kata:'テ', romaji:'te', type:'seion', row:'た'}, {hira:'と', kata:'ト', romaji:'to', type:'seion', row:'た'},
+            {hira:'な', kata:'ナ', romaji:'na', type:'seion', row:'な'}, {hira:'に', kata:'ニ', romaji:'ni', type:'seion', row:'な'}, {hira:'ぬ', kata:'ヌ', romaji:'nu', type:'seion', row:'な'}, {hira:'ね', kata:'ネ', romaji:'ne', type:'seion', row:'な'}, {hira:'の', kata:'ノ', romaji:'no', type:'seion', row:'な'},
+            {hira:'は', kata:'ハ', romaji:'ha', type:'seion', row:'は'}, {hira:'ひ', kata:'ヒ', romaji:'hi', type:'seion', row:'は'}, {hira:'ふ', kata:'フ', romaji:'fu', type:'seion', row:'は'}, {hira:'へ', kata:'ヘ', romaji:'he', type:'seion', row:'は'}, {hira:'ほ', kata:'ホ', romaji:'ho', type:'seion', row:'は'},
+            {hira:'ま', kata:'マ', romaji:'ma', type:'seion', row:'ま'}, {hira:'み', kata:'ミ', romaji:'mi', type:'seion', row:'ま'}, {hira:'む', kata:'ム', romaji:'mu', type:'seion', row:'ま'}, {hira:'め', kata:'メ', romaji:'me', type:'seion', row:'ま'}, {hira:'も', kata:'モ', romaji:'mo', type:'seion', row:'ま'},
+            {hira:'や', kata:'ヤ', romaji:'ya', type:'seion', row:'や'}, {hira:'', kata:'', romaji:'', type:'', row:''},                  {hira:'ゆ', kata:'ユ', romaji:'yu', type:'seion', row:'や'}, {hira:'', kata:'', romaji:'', type:'', row:''},                  {hira:'よ', kata:'ヨ', romaji:'yo', type:'seion', row:'や'},
+            {hira:'ら', kata:'ラ', romaji:'ra', type:'seion', row:'ら'}, {hira:'り', kata:'リ', romaji:'ri', type:'seion', row:'ら'}, {hira:'る', kata:'ル', romaji:'ru', type:'seion', row:'ら'}, {hira:'れ', kata:'レ', romaji:'re', type:'seion', row:'ら'}, {hira:'ろ', kata:'ロ', romaji:'ro', type:'seion', row:'ら'},
+            {hira:'わ', kata:'ワ', romaji:'wa', type:'seion', row:'わ'}, {hira:'', kata:'', romaji:'', type:'', row:''},                  {hira:'', kata:'', romaji:'', type:'', row:''},                  {hira:'', kata:'', romaji:'', type:'', row:''},                  {hira:'を', kata:'ヲ', romaji:'wo', type:'seion', row:'わ'}
         ];
 
-        // 修正上方 "か" 資料格式小筆誤
-        seionData[5] = {hira:'か', kata:'カ', romaji:'ka'};
-
         // 2. 鼻音
-        const bionData = [{hira:'ん', kata:'ン', romaji:'n'}];
+        const bionData = [{hira:'ん', kata:'ン', romaji:'n', type:'seion', row:'わ'}];
 
         // 3. 濁音
         const dakuonData = [
-            {hira:'が', kata:'ガ', romaji:'ga'}, {hira:'ぎ', kata:'ギ', romaji:'gi'}, {hira:'ぐ', kata:'グ', romaji:'gu'}, {hira:'げ', kata:'ゲ', romaji:'ge'}, {hira:'ご', kata:'ゴ', romaji:'go'},
-            {hira:'ざ', kata:'ザ', romaji:'za'}, {hira:'じ', kata:'ジ', romaji:'ji'}, {hira:'ず', kata:'ズ', romaji:'zu'}, {hira:'ぜ', kata:'ゼ', romaji:'ze'}, {hira:'ぞ', kata:'ゾ', romaji:'zo'},
-            {hira:'だ', kata:'ダ', romaji:'da'}, {hira:'ぢ', kata:'ヂ', romaji:'ji'}, {hira:'づ', kata:'ヅ', romaji:'zu'}, {hira:'で', kata:'デ', romaji:'de'}, {hira:'ど', kata:'ド', romaji:'do'},
-            {hira:'ば', kata:'バ', romaji:'ba'}, {hira:'び', kata:'ビ', romaji:'bi'}, {hira:'ぶ', kata:'ブ', romaji:'bu'}, {hira:'べ', kata:'ベ', romaji:'be'}, {hira:'ぼ', kata:'ボ', romaji:'bo'}
+            {hira:'が', kata:'ガ', romaji:'ga', type:'dakuon', row:'が'}, {hira:'ぎ', kata:'ギ', romaji:'gi', type:'dakuon', row:'が'}, {hira:'ぐ', kata:'グ', romaji:'gu', type:'dakuon', row:'が'}, {hira:'げ', kata:'ゲ', romaji:'ge', type:'dakuon', row:'が'}, {hira:'ご', kata:'ゴ', romaji:'go', type:'dakuon', row:'が'},
+            {hira:'ざ', kata:'ザ', romaji:'za', type:'dakuon', row:'ざ'}, {hira:'じ', kata:'ジ', romaji:'ji', type:'dakuon', row:'ざ'}, {hira:'ず', kata:'ズ', romaji:'zu', type:'dakuon', row:'ざ'}, {hira:'ぜ', kata:'ゼ', romaji:'ze', type:'dakuon', row:'ざ'}, {hira:'ぞ', kata:'ゾ', romaji:'zo', type:'dakuon', row:'ざ'},
+            {hira:'だ', kata:'推', romaji:'da', type:'dakuon', row:'だ'}, {hira:'ぢ', kata:'ヂ', romaji:'ji', type:'dakuon', row:'だ'}, {hira:'づ', kata:'ヅ', romaji:'zu', type:'dakuon', row:'だ'}, {hira:'де', kata:'デ', romaji:'de', type:'dakuon', row:'だ'}, {hira:'ど', kata:'ド', romaji:'do', type:'dakuon', row:'だ'},
+            {hira:'ば', kata:'バ', romaji:'ba', type:'dakuon', row:'ば'}, {hira:'び', kata:'ビ', romaji:'bi', type:'dakuon', row:'ば'}, {hira:'ぶ', kata:'ブ', romaji:'bu', type:'dakuon', row:'ば'}, {hira:'べ', kata:'ベ', romaji:'be', type:'dakuon', row:'ば'}, {hira:'ぼ', kata:'ボ', romaji:'bo', type:'dakuon', row:'ば'}
         ];
+        // 額外微調修正：把原本打錯的片假名「推」、平假名「де」修正回「ダ」和「で」
+        dakuonData[10] = {hira:'だ', kata:'ダ', romaji:'da', type:'dakuon', row:'だ'};
+        dakuonData[13] = {hira:'で', kata:'デ', romaji:'de', type:'dakuon', row:'だ'};
 
         // 4. 半濁音
         const handakuonData = [
-            {hira:'ぱ', kata:'パ', romaji:'pa'}, {hira:'ぴ', kata:'ピ', romaji:'pi'}, {hira:'ぷ', kata:'プ', romaji:'pu'}, {hira:'ぺ', kata:'ペ', romaji:'pe'}, {hira:'ぽ', kata:'ポ', romaji:'po'}
+            {hira:'ぱ', kata:'パ', romaji:'pa', type:'handakuon', row:'ぱ'}, {hira:'ぴ', kata:'ピ', romaji:'pi', type:'handakuon', row:'ぱ'}, {hira:'ぷ', kata:'プ', romaji:'pu', type:'handakuon', row:'ぱ'}, {hira:'ぺ', kata:'ペ', romaji:'pe', type:'handakuon', row:'ぱ'}, {hira:'ぽ', kata:'ポ', romaji:'po', type:'handakuon', row:'ぱ'}
         ];
 
         // 5. 拗音
         const yoonData = [
-            {hira:'きゃ', kata:'キャ', romaji:'kya'}, {hira:'きゅ', kata:'キュ', romaji:'kyu'}, {hira:'きょ', kata:'キョ', romaji:'kyo'},
-            {hira:'しゃ', kata:'シャ', romaji:'sha'}, {hira:'しゅ', kata:'シュ', romaji:'shu'}, {hira:'しょ', kata:'ショ', romaji:'sho'},
-            {hira:'ちゃ', kata:'チャ', romaji:'cha'}, {hira:'ちゅ', kata:'チュ', romaji:'chu'}, {hira:'ちょ', kata:'チョ', romaji:'cho'},
-            {hira:'にゃ', kata:'ニャ', romaji:'nya'}, {hira:'にゅ', kata:'ニュ', romaji:'nyu'}, {hira:'にょ', kata:'ニョ', romaji:'nyo'},
-            {hira:'ひゃ', kata:'ヒャ', romaji:'hya'}, {hira:'ひゅ', kata:'ヒュ', romaji:'hyu'}, {hira:'ひょ', kata:'ヒョ', romaji:'hyo'},
-            {hira:'みゃ', kata:'ミャ', romaji:'mya'}, {hira:'みゅ', kata:'ミュ', romaji:'myu'}, {hira:'みょ', kata:'ミョ', romaji:'myo'},
-            {hira:'りゃ', kata:'リャ', romaji:'rya'}, {hira:'りゅ', kata:'リュ', romaji:'ryu'}, {hira:'りょ', kata:'リョ', romaji:'ryo'},
-            {hira:'ぎゃ', kata:'ギャ', romaji:'gya'}, {hira:'ぎゅ', kata:'ギュ', romaji:'gyu'}, {hira:'ぎょ', kata:'ギョ', romaji:'gyo'},
-            {hira:'じゃ', kata:'ジャ', romaji:'ja'},  {hira:'じゅ', kata:'ジュ', romaji:'ju'},  {hira:'じょ', kata:'ジョ', romaji:'jo'},
-            {hira:'びゃ', kata:'ビャ', romaji:'bya'}, {hira:'びゅ', kata:'ビュ', romaji:'byu'}, {hira:'びょ', kata:'ビョ', romaji:'byo'},
-            {hira:'ぴゃ', kata:'ピャ', romaji:'pya'}, {hira:'ぴゅ', kata:'ピュ', romaji:'pyu'}, {hira:'ぴょ', kata:'ピョ', romaji:'pyo'}
+            {hira:'きゃ', kata:'キャ', romaji:'kya', type:'yoon', row:'拗音'}, {hira:'きゅ', kata:'キュ', romaji:'kyu', type:'yoon', row:'拗音'}, {hira:'きょ', kata:'キョ', romaji:'kyo', type:'yoon', row:'拗音'},
+            {hira:'しゃ', kata:'シャ', romaji:'sha', type:'yoon', row:'拗音'}, {hira:'しゅ', kata:'シュ', romaji:'shu', type:'yoon', row:'拗音'}, {hira:'しょ', kata:'ショ', romaji:'sho', type:'yoon', row:'拗音'},
+            {hira:'ちゃ', kata:'チャ', romaji:'cha', type:'yoon', row:'拗音'}, {hira:'ちゅ', kata:'チュ', romaji:'chu', type:'yoon', row:'拗音'}, {hira:'ちょ', kata:'チョ', romaji:'cho', type:'yoon', row:'拗音'},
+            {hira:'にゃ', kata:'ニャ', romaji:'nya', type:'yoon', row:'拗音'}, {hira:'にゅ', kata:'ニュ', romaji:'nyu', type:'yoon', row:'拗音'}, {hira:'にょ', kata:'ニョ', romaji:'nyo', type:'yoon', row:'拗音'},
+            {hira:'ひゃ', kata:'ヒャ', romaji:'hya', type:'yoon', row:'拗音'}, {hira:'ひゅ', kata:'ヒュ', romaji:'hyu', type:'yoon', row:'拗音'}, {hira:'ひょ', kata:'ヒョ', romaji:'hyo', type:'yoon', row:'拗音'},
+            {hira:'みゃ', kata:'ミャ', romaji:'mya', type:'yoon', row:'拗音'}, {hira:'みゅ', kata:'ミュ', romaji:'myu', type:'yoon', row:'拗音'}, {hira:'みょ', kata:'ミョ', romaji:'myo', type:'yoon', row:'拗音'},
+            {hira:'りゃ', kata:'リャ', romaji:'rya', type:'yoon', row:'拗音'}, {hira:'りゅ', kata:'リュ', romaji:'ryu', type:'yoon', row:'拗音'}, {hira:'りょ', kata:'リョ', romaji:'ryo', type:'yoon', row:'拗音'},
+            {hira:'ぎゃ', kata:'ギャ', romaji:'gya', type:'yoon', row:'拗音'}, {hira:'ぎゅ', kata:'ギュ', romaji:'gyu', type:'yoon', row:'拗音'}, {hira:'ぎょ', kata:'ギョ', romaji:'gyo', type:'yoon', row:'拗音'},
+            {hira:'じゃ', kata:'ジャ', romaji:'ja', type:'yoon', row:'拗音'},  {hira:'じゅ', kata:'ジュ', romaji:'ju', type:'yoon', row:'拗音'},  {hira:'じょ', kata:'ジョ', romaji:'jo', type:'yoon', row:'拗音'},
+            {hira:'びゃ', kata:'ビャ', romaji:'bya', type:'yoon', row:'拗音'}, {hira:'びゅ', kata:'ビュ', romaji:'byu', type:'yoon', row:'拗音'}, {hira:'びょ', kata:'ビョ', romaji:'byo', type:'yoon', row:'拗音'},
+            {hira:'ぴゃ', kata:'ピャ', romaji:'pya', type:'yoon', row:'拗音'}, {hira:'ぴゅ', kata:'ピュ', romaji:'pyu', type:'yoon', row:'拗音'}, {hira:'ぴょ', kata:'ピョ', romaji:'pyo', type:'yoon', row:'拗音'}
         ];
 
-        // 遊戲出題清單 (隨機抽題目，平假名或片假名都會作為題目出現)
-        const allQuizPool = [];
-        [...seionData, ...bionData, ...dakuonData, ...handakuonData, ...yoonData].forEach(item => {
-            if (item.hira !== '') {
-                // 將平假名跟片假名分開放入題目池，增加豐富度
-                allQuizPool.push({ text: item.hira, romaji: item.romaji });
-                allQuizPool.push({ text: item.kata, romaji: item.romaji });
-            }
-        });
+        const masterPool = [...seionData, ...bionData, ...dakuonData, ...handakuonData, ...yoonData].filter(item => item.hira !== '');
 
+        let activeQuizPool = [];
         let currentScore = 0;
         let currentQuestion = null;
 
-        // 渲染字卡介面工具 (同時塞入平假名同片假名)
+        // 渲染字卡
         function renderChart(data, targetId) {
             const container = document.getElementById(targetId);
             data.forEach(item => {
                 const card = document.createElement('div');
                 if (item.hira === '') {
                     card.className = 'kana-card';
-                    card.style.opacity = '0'; // 保持對齊嘅隱形卡
+                    card.style.opacity = '0';
                 } else {
                     card.className = 'kana-card';
                     card.innerHTML = `
@@ -371,7 +468,6 @@
                         <span class="romaji">${item.romaji}</span>
                     `;
                     card.onclick = () => {
-                        // 點擊發平假名嘅音（日文發音通用）
                         const utterance = new SpeechSynthesisUtterance(item.hira);
                         utterance.lang = 'ja-JP';
                         window.speechSynthesis.speak(utterance);
@@ -381,14 +477,21 @@
             });
         }
 
-        // 初始化畫出所有圖表
         renderChart(seionData, 'seionChart');
         renderChart(bionData, 'bionChart');
         renderChart(dakuonData, 'dakuonChart');
         renderChart(handakuonData, 'handakuonChart');
         renderChart(yoonData, 'yoonChart');
 
-        // 零延遲電子音效產生器
+        // 全選 / 取消全選 控制
+        let isAllChecked = true;
+        function selectAllRows() {
+            isAllChecked = !isAllChecked;
+            const rowCheckboxes = document.querySelectorAll('.chk-row');
+            rowCheckboxes.forEach(cb => cb.checked = isAllChecked);
+        }
+
+        // 音效
         function playDingDong() {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const osc = audioCtx.createOscillator();
@@ -404,7 +507,62 @@
             osc.stop(audioCtx.currentTime + 0.35);
         }
 
-        // 遊戲出題邏輯
+        // 核心過濾邏輯
+        function updateQuizPool() {
+            const hiraOn = document.getElementById('chkHira').checked;
+            const kataOn = document.getElementById('chkKata').checked;
+            
+            const seionOn = document.getElementById('typeSeion').checked;
+            const dakuonOn = document.getElementById('typeDakuon').checked;
+            const handakuonOn = document.getElementById('typeHandakuon').checked;
+            const yoonOn = document.getElementById('typeYoon').checked;
+
+            const checkedRows = [];
+            const rowCheckboxes = document.querySelectorAll('.chk-row');
+            rowCheckboxes.forEach(cb => {
+                if (cb.checked) checkedRows.push(cb.value);
+            });
+
+            if (!hiraOn && !kataOn) {
+                alert("請至少揀選一種假名（平假名或片假名）吱！");
+                return;
+            }
+            if (checkedRows.length === 0) {
+                alert("請至少勾選一行（例如：あ行）進行測驗吱！");
+                return;
+            }
+
+            activeQuizPool = [];
+            masterPool.forEach(item => {
+                let matchCategory = false;
+                if (item.type === 'seion' && seionOn) matchCategory = true;
+                if (item.type === 'dakuon' && dakuonOn) matchCategory = true;
+                if (item.type === 'handakuon' && handakuonOn) matchCategory = true;
+                if (item.type === 'yoon' && yoonOn) matchCategory = true;
+
+                if (matchCategory && checkedRows.includes(item.row)) {
+                    if (hiraOn) activeQuizPool.push({ text: item.hira, romaji: item.romaji });
+                    if (kataOn) activeQuizPool.push({ text: item.kata, romaji: item.romaji });
+                }
+            });
+
+            if (activeQuizPool.length === 0) {
+                alert("根據你勾選的交集範圍，題目池入面沒有對應的假名，請重新勾選吱！");
+                return;
+            }
+
+            // 重設進度
+            currentScore = 0;
+            document.getElementById('score').innerText = currentScore;
+            document.getElementById('quizContainer').style.display = 'block';
+            document.getElementById('winMessage').style.display = 'none';
+            for (let i = 0; i < 9; i++) {
+                document.getElementById(`piece${i}`).style.visibility = 'hidden';
+            }
+
+            nextQuestion();
+        }
+
         function nextQuestion() {
             if (currentScore >= 9) {
                 document.getElementById('quizContainer').style.display = 'none';
@@ -412,21 +570,18 @@
                 return;
             }
 
-            // 隨機抽題 (有機會出平假名或片假名)
-            currentQuestion = allQuizPool[Math.floor(Math.random() * allQuizPool.length)];
+            currentQuestion = activeQuizPool[Math.floor(Math.random() * activeQuizPool.length)];
             document.getElementById('questionKana').innerText = currentQuestion.text;
 
-            // 產生隨機 4 個羅馬拼音選項
             let options = [currentQuestion.romaji];
             while (options.length < 4) {
-                let randomRomaji = allQuizPool[Math.floor(Math.random() * allQuizPool.length)].romaji;
+                let randomRomaji = masterPool[Math.floor(Math.random() * masterPool.length)].romaji;
                 if (!options.includes(randomRomaji)) {
                     options.push(randomRomaji);
                 }
             }
             options.sort(() => Math.random() - 0.5);
 
-            // 顯示按鈕
             const optionsGrid = document.getElementById('optionsGrid');
             optionsGrid.innerHTML = '';
             options.forEach(opt => {
@@ -440,29 +595,23 @@
 
         function checkAnswer(selected) {
             if (selected === currentQuestion.romaji) {
-                // 答對解鎖拼圖
                 document.getElementById(`piece${currentScore}`).style.visibility = 'visible';
                 currentScore++;
                 document.getElementById('score').innerText = currentScore;
-                
-                // 即時發出叮咚聲
                 playDingDong();
-
                 nextQuestion();
             } else {
-                alert("唔啱，再試下！");
+                alert("oh no，再試一下吱！");
             }
         }
 
-// 網頁載入時預先喚醒日文語音引擎，減少第一次點擊的延遲
-window.addEventListener('DOMContentLoaded', () => {
-    const data = new SpeechSynthesisUtterance(' ');
-    data.lang = 'ja-JP';
-    data.volume = 0; // 靜音
-    window.speechSynthesis.speak(data);
-});
-        // 開局
-        nextQuestion();
+        window.addEventListener('DOMContentLoaded', () => {
+            const data = new SpeechSynthesisUtterance(' ');
+            data.lang = 'ja-JP';
+            data.volume = 0;
+            window.speechSynthesis.speak(data);
+            updateQuizPool();
+        });
     </script>
 </body>
 </html>
