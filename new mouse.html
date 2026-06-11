@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鼠鼠日文五十音學習網🐭</title>
+    <style>
+        :root {
+            --primary-color: #e6f2ff;
+            --accent-color: #ffb6c1;
+            --text-color: #333;
+            --border-color: #ccc;
+            --section-bg: #fff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f9fa;
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            max-width: 1300px;
+            width: 100%;
+        }
+
+        .section {
+            background: var(--section-bg);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            flex: 1.4;
+            min-width: 350px;
+        }
+
+        .game-box {
+            flex: 0.8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        /* 50音表分類區 */
+        .category-title {
+            background: #2c3e50;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        /* 拗音需要3欄排列 */
+        .yo-on-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .kana-card {
+            background: var(--primary-color);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 10px 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .kana-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-color);
+            background: #fff;
+        }
+
+        .kana-card .hiragana {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #2c3e50;
+            line-height: 1.2;
+        }
+
+        .kana-card .katakana {
+            font-size: 1.1rem;
+            font-weight: normal;
+            color: #e67e22; /* 用橙色區分片假名 */
+            margin: 2px 0;
+        }
+
+        .kana-card .romaji {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* 遊戲區 */
+        .quiz-container {
+            text-align: center;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .question-display {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 10px 0;
+            background: #fff5f5;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px dashed #ffb6c1;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .option-btn:hover {
+            background: #f0f0f0;
+        }
+
+        /* 拼圖區 */
+        .puzzle-wrapper {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 3px solid #333;
+            margin-top: 15px;
+            background: #eee;
+            overflow: hidden;
+        }
+
+        .puzzle-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url('25786.png'); 
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1; 
+        }
+
+        .puzzle-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+        }
+
+        .puzzle-piece {
+            background-image: url('25786.png');
+            background-size: 300px 300px;
+            border: 1px dashed rgba(255,255,255,0.6);
+            visibility: hidden;
+        }
+
+        .p1 { background-position: 0px 0px; }
+        .p2 { background-position: -100px 0px; }
+        .p3 { background-position: -200px 0px; }
+        .p4 { background-position: 0px -100px; }
+        .p5 { background-position: -100px -100px; }
+        .p6 { background-position: -200px -100px; }
+        .p7 { background-position: 0px -200px; }
+        .p8 { background-position: -100px -200px; }
+        .p9 { background-position: -200px -200px; }
+
+        .score-board {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .win-message {
+            display: none;
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-top: 10px;
+            text-align: center;
+            animation: bounce 0.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>鼠鼠日文五十音學習🐭</h1>
+        <p>點擊字卡聽發音（上方為平假名，下方為片假名），答對 9 題即可幫睫毛老鼠完成拼圖！</p>
+    </header>
+
+    <div class="container">
+        <!-- 左邊：完整五十音分類表 -->
+        <div class="section">
+            <div class="category-title">1. 清音 (Seion)</div>
+            <div class="chart-grid" id="seionChart"></div>
+
+            <div class="category-title">2. 鼻音 (Bion)</div>
+            <div class="chart-grid" id="bionChart"></div>
+
+            <div class="category-title">3. 濁音 (Dakuon)</div>
+            <div class="chart-grid" id="dakuonChart"></div>
+
+            <div class="category-title">4. 半濁音 (Handakuon)</div>
+            <div class="chart-grid" id="handakuonChart"></div>
+
+            <div class="category-title">5. 拗音 (Yōon)</div>
+            <div class="chart-grid yo-on-grid" id="yoonChart"></div>
+        </div>
+
+        <!-- 右邊：拼圖遊戲 -->
+        <div class="section game-box">
+            <h2>老鼠拼圖挑戰 🧩</h2>
+            <div class="score-board">成功配對: <span id="score">0</span> / 9</div>
+            
+            <div class="quiz-container" id="quizContainer">
+                <p>請揀出正確嘅羅馬拼音：</p>
+                <div class="question-display" id="questionKana">あ</div>
+                <div class="options-grid" id="optionsGrid"></div>
+            </div>
+
+            <div class="win-message" id="winMessage">🎉 恭喜！你成功砌番隻大睫毛老鼠出嚟啦！ 🐭</div>
+
+            <div class="puzzle-wrapper">
+                <div class="puzzle-bg"></div>
+                <div class="puzzle-grid">
+                    <div class="puzzle-piece p1" id="piece0"></div>
+                    <div class="puzzle-piece p2" id="piece1"></div>
+                    <div class="puzzle-piece p3" id="piece2"></div>
+                    <div class="puzzle-piece p4" id="piece3"></div>
+                    <div class="puzzle-piece p5" id="piece4"></div>
+                    <div class="puzzle-piece p6" id="piece5"></div>
+                    <div class="puzzle-piece p7" id="piece6"></div>
+                    <div class="puzzle-piece p8" id="piece7"></div>
+                    <div class="puzzle-piece p9" id="piece8"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. 清音 (包含平假名、片假名、羅馬拼音)
+        const seionData = [
+            {hira:'あ', kata:'ア', romaji:'a'}, {hira:'い', kata:'イ', romaji:'i'}, {hira:'う', kata:'ウ', romaji:'u'}, {hira:'え', kata:'エ', romaji:'e'}, {hira:'お', kata:'オ', romaji:'o'},
+            {hira:'ка', kata:'カ', romaji:'ka', hira:'か'}, {hira:'き', kata:'キ', romaji:'ki'}, {hira:'く', kata:'ク', romaji:'ku'}, {hira:'け', kata:'ケ', romaji:'ke'}, {hira:'こ', kata:'コ', romaji:'ko'},
+            {hira:'さ', kata:'サ', romaji:'sa'}, {hira:'し', kata:'シ', romaji:'shi'}, {hira:'す', kata:'ス', romaji:'su'}, {hira:'せ', kata:'セ', romaji:'se'}, {hira:'そ', kata:'ソ', romaji:'so'},
+            {hira:'た', kata:'タ', romaji:'ta'}, {hira:'ち', kata:'チ', romaji:'chi'}, {hira:'つ', kata:'ツ', romaji:'tsu'}, {hira:'て', kata:'テ', romaji:'te'}, {hira:'と', kata:'ト', romaji:'to'},
+            {hira:'な', kata:'ナ', romaji:'na'}, {hira:'に', kata:'ニ', romaji:'ni'}, {hira:'ぬ', kata:'ヌ', romaji:'nu'}, {hira:'ね', kata:'ネ', romaji:'ne'}, {hira:'の', kata:'ノ', romaji:'no'},
+            {hira:'は', kata:'ハ', romaji:'ha'}, {hira:'ひ', kata:'ヒ', romaji:'hi'}, {hira:'ふ', kata:'フ', romaji:'fu'}, {hira:'へ', kata:'ヘ', romaji:'he'}, {hira:'ほ', kata:'ホ', romaji:'ho'},
+            {hira:'ま', kata:'マ', romaji:'ma'}, {hira:'み', kata:'ミ', romaji:'mi'}, {hira:'む', kata:'ム', romaji:'mu'}, {hira:'め', kata:'メ', romaji:'me'}, {hira:'も', kata:'モ', romaji:'mo'},
+            {hira:'や', kata:'ヤ', romaji:'ya'}, {hira:'', kata:'', romaji:''},        {hira:'ゆ', kata:'ユ', romaji:'yu'}, {hira:'', kata:'', romaji:''},        {hira:'よ', kata:'ヨ', romaji:'yo'},
+            {hira:'ら', kata:'ラ', romaji:'ra'}, {hira:'り', kata:'リ', romaji:'ri'}, {hira:'る', kata:'ル', romaji:'ru'}, {hira:'れ', kata:'レ', romaji:'re'}, {hira:'ろ', kata:'ロ', romaji:'ro'},
+            {hira:'わ', kata:'ワ', romaji:'wa'}, {hira:'', kata:'', romaji:''},        {hira:'', kata:'', romaji:''},        {hira:'', kata:'', romaji:''},        {hira:'を', kata:'ヲ', romaji:'wo'}
+        ];
+
+        // 修正上方 "か" 資料格式小筆誤
+        seionData[5] = {hira:'か', kata:'カ', romaji:'ka'};
+
+        // 2. 鼻音
+        const bionData = [{hira:'ん', kata:'ン', romaji:'n'}];
+
+        // 3. 濁音
+        const dakuonData = [
+            {hira:'が', kata:'ガ', romaji:'ga'}, {hira:'ぎ', kata:'ギ', romaji:'gi'}, {hira:'ぐ', kata:'グ', romaji:'gu'}, {hira:'げ', kata:'ゲ', romaji:'ge'}, {hira:'ご', kata:'ゴ', romaji:'go'},
+            {hira:'ざ', kata:'ザ', romaji:'za'}, {hira:'じ', kata:'ジ', romaji:'ji'}, {hira:'ず', kata:'ズ', romaji:'zu'}, {hira:'ぜ', kata:'ゼ', romaji:'ze'}, {hira:'ぞ', kata:'ゾ', romaji:'zo'},
+            {hira:'だ', kata:'ダ', romaji:'da'}, {hira:'ぢ', kata:'ヂ', romaji:'ji'}, {hira:'づ', kata:'ヅ', romaji:'zu'}, {hira:'で', kata:'デ', romaji:'de'}, {hira:'ど', kata:'ド', romaji:'do'},
+            {hira:'ば', kata:'バ', romaji:'ba'}, {hira:'び', kata:'ビ', romaji:'bi'}, {hira:'ぶ', kata:'ブ', romaji:'bu'}, {hira:'べ', kata:'ベ', romaji:'be'}, {hira:'ぼ', kata:'ボ', romaji:'bo'}
+        ];
+
+        // 4. 半濁音
+        const handakuonData = [
+            {hira:'ぱ', kata:'パ', romaji:'pa'}, {hira:'ぴ', kata:'ピ', romaji:'pi'}, {hira:'ぷ', kata:'プ', romaji:'pu'}, {hira:'ぺ', kata:'ペ', romaji:'pe'}, {hira:'ぽ', kata:'ポ', romaji:'po'}
+        ];
+
+        // 5. 拗音
+        const yoonData = [
+            {hira:'きゃ', kata:'キャ', romaji:'kya'}, {hira:'きゅ', kata:'キュ', romaji:'kyu'}, {hira:'きょ', kata:'キョ', romaji:'kyo'},
+            {hira:'しゃ', kata:'シャ', romaji:'sha'}, {hira:'しゅ', kata:'シュ', romaji:'shu'}, {hira:'しょ', kata:'ショ', romaji:'sho'},
+            {hira:'ちゃ', kata:'チャ', romaji:'cha'}, {hira:'ちゅ', kata:'チュ', romaji:'chu'}, {hira:'ちょ', kata:'チョ', romaji:'cho'},
+            {hira:'にゃ', kata:'ニャ', romaji:'nya'}, {hira:'にゅ', kata:'ニュ', romaji:'nyu'}, {hira:'にょ', kata:'ニョ', romaji:'nyo'},
+            {hira:'ひゃ', kata:'ヒャ', romaji:'hya'}, {hira:'ひゅ', kata:'ヒュ', romaji:'hyu'}, {hira:'ひょ', kata:'ヒョ', romaji:'hyo'},
+            {hira:'みゃ', kata:'ミャ', romaji:'mya'}, {hira:'みゅ', kata:'ミュ', romaji:'myu'}, {hira:'みょ', kata:'ミョ', romaji:'myo'},
+            {hira:'りゃ', kata:'リャ', romaji:'rya'}, {hira:'りゅ', kata:'リュ', romaji:'ryu'}, {hira:'りょ', kata:'リョ', romaji:'ryo'},
+            {hira:'ぎゃ', kata:'ギャ', romaji:'gya'}, {hira:'ぎゅ', kata:'ギュ', romaji:'gyu'}, {hira:'ぎょ', kata:'ギョ', romaji:'gyo'},
+            {hira:'じゃ', kata:'ジャ', romaji:'ja'},  {hira:'じゅ', kata:'ジュ', romaji:'ju'},  {hira:'じょ', kata:'ジョ', romaji:'jo'},
+            {hira:'びゃ', kata:'ビャ', romaji:'bya'}, {hira:'びゅ', kata:'ビュ', romaji:'byu'}, {hira:'びょ', kata:'ビョ', romaji:'byo'},
+            {hira:'ぴゃ', kata:'ピャ', romaji:'pya'}, {hira:'ぴゅ', kata:'ピュ', romaji:'pyu'}, {hira:'ぴょ', kata:'ピョ', romaji:'pyo'}
+        ];
+
+        // 遊戲出題清單 (隨機抽題目，平假名或片假名都會作為題目出現)
+        const allQuizPool = [];
+        [...seionData, ...bionData, ...dakuonData, ...handakuonData, ...yoonData].forEach(item => {
+            if (item.hira !== '') {
+                // 將平假名跟片假名分開放入題目池，增加豐富度
+                allQuizPool.push({ text: item.hira, romaji: item.romaji });
+                allQuizPool.push({ text: item.kata, romaji: item.romaji });
+            }
+        });
+
+        let currentScore = 0;
+        let currentQuestion = null;
+
+        // 渲染字卡介面工具 (同時塞入平假名同片假名)
+        function renderChart(data, targetId) {
+            const container = document.getElementById(targetId);
+            data.forEach(item => {
+                const card = document.createElement('div');
+                if (item.hira === '') {
+                    card.className = 'kana-card';
+                    card.style.opacity = '0'; // 保持對齊嘅隱形卡
+                } else {
+                    card.className = 'kana-card';
+                    card.innerHTML = `
+                        <span class="hiragana">${item.hira}</span>
+                        <span class="katakana">${item.kata}</span>
+                        <span class="romaji">${item.romaji}</span>
+                    `;
+                    card.onclick = () => {
+                        // 點擊發平假名嘅音（日文發音通用）
+                        const utterance = new SpeechSynthesisUtterance(item.hira);
+                        utterance.lang = 'ja-JP';
+                        window.speechSynthesis.speak(utterance);
+                    };
+                }
+                container.appendChild(card);
+            });
+        }
+
+        // 初始化畫出所有圖表
+        renderChart(seionData, 'seionChart');
+        renderChart(bionData, 'bionChart');
+        renderChart(dakuonData, 'dakuonChart');
+        renderChart(handakuonData, 'handakuonChart');
+        renderChart(yoonData, 'yoonChart');
+
+        // 零延遲電子音效產生器
+        function playDingDong() {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); 
+            osc.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.08); 
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+            osc.start(audioCtx.currentTime);
+            osc.stop(audioCtx.currentTime + 0.35);
+        }
+
+        // 遊戲出題邏輯
+        function nextQuestion() {
+            if (currentScore >= 9) {
+                document.getElementById('quizContainer').style.display = 'none';
+                document.getElementById('winMessage').style.display = 'block';
+                return;
+            }
+
+            // 隨機抽題 (有機會出平假名或片假名)
+            currentQuestion = allQuizPool[Math.floor(Math.random() * allQuizPool.length)];
+            document.getElementById('questionKana').innerText = currentQuestion.text;
+
+            // 產生隨機 4 個羅馬拼音選項
+            let options = [currentQuestion.romaji];
+            while (options.length < 4) {
+                let randomRomaji = allQuizPool[Math.floor(Math.random() * allQuizPool.length)].romaji;
+                if (!options.includes(randomRomaji)) {
+                    options.push(randomRomaji);
+                }
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            // 顯示按鈕
+            const optionsGrid = document.getElementById('optionsGrid');
+            optionsGrid.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt);
+                optionsGrid.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected) {
+            if (selected === currentQuestion.romaji) {
+                // 答對解鎖拼圖
+                document.getElementById(`piece${currentScore}`).style.visibility = 'visible';
+                currentScore++;
+                document.getElementById('score').innerText = currentScore;
+                
+                // 即時發出叮咚聲
+                playDingDong();
+
+                nextQuestion();
+            } else {
+                alert("唔啱，再試下！");
+            }
+        }
+
+// 網頁載入時預先喚醒日文語音引擎，減少第一次點擊的延遲
+window.addEventListener('DOMContentLoaded', () => {
+    const data = new SpeechSynthesisUtterance(' ');
+    data.lang = 'ja-JP';
+    data.volume = 0; // 靜音
+    window.speechSynthesis.speak(data);
+});
+        // 開局
+        nextQuestion();
+    </script>
+</body>
+</html>
